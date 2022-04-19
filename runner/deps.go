@@ -12,16 +12,31 @@ package runner
 
 import (
 	"bufio"
+	"fmt"
 	"io"
+	"reflect"
 	"regexp"
 	"runtime/pprof"
 	"strings"
 	"sync"
+	"time"
 )
 
 // TestDeps is an implementation of the testing.testDeps interface,
 // suitable for passing to testing.MainStart.
 type TestDeps struct{}
+
+// corpusEntry is an alias to the same type as internal/fuzz.CorpusEntry.
+// We use a type alias because we don't want to export this type, and we can't
+// import internal/fuzz from testing.
+type corpusEntry = struct {
+	Parent     string
+	Path       string
+	Data       []byte
+	Values     []any
+	Generation int
+	IsSeed     bool
+}
 
 var matchPat string
 var matchRe *regexp.Regexp
@@ -125,3 +140,35 @@ func (TestDeps) StopTestLog() error {
 func (TestDeps) SetPanicOnExit0(v bool) {
 	SetPanicOnExit0(v)
 }
+
+func (TestDeps) CheckCorpus(vals []any, types []reflect.Type) error {
+	if len(vals) != len(types) {
+		return fmt.Errorf("wrong number of values in corpus entry: %d, want %d", len(vals), len(types))
+	}
+	valsT := make([]reflect.Type, len(vals))
+	for valsI, v := range vals {
+		valsT[valsI] = reflect.TypeOf(v)
+	}
+	for i := range types {
+		if valsT[i] != types[i] {
+			return fmt.Errorf("mismatched types in corpus entry: %v, want %v", valsT, types)
+		}
+	}
+	return nil
+}
+
+func (TestDeps) CoordinateFuzzing(time.Duration, int64, time.Duration, int64, int, []corpusEntry, []reflect.Type, string, string) error {
+	return nil
+}
+
+func (TestDeps) ReadCorpus(dir string, types []reflect.Type) ([]corpusEntry, error) {
+	return nil, nil
+}
+
+func (TestDeps) ResetCoverage() {}
+
+func (TestDeps) RunFuzzWorker(func(corpusEntry) error) error {
+	return nil
+}
+
+func (TestDeps) SnapshotCoverage() {}

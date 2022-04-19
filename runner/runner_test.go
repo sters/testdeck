@@ -30,7 +30,8 @@ func Test_Runner_ShouldAddStatistics(t *testing.T) {
 // before initialization.
 func Test_Runner_ShouldInitialize(t *testing.T) {
 	// Arrange
-	m := testing.MainStart(nil, make([]testing.InternalTest, 0), make([]testing.InternalBenchmark, 0), make([]testing.InternalFuzzTarget, 0), make([]testing.InternalExample, 0))
+	deps := &TestDeps{}
+	m := testing.MainStart(deps, make([]testing.InternalTest, 0), make([]testing.InternalBenchmark, 0), make([]testing.InternalFuzzTarget, 0), make([]testing.InternalExample, 0))
 	assert.False(t, Initialized()) // check before initialization
 
 	// Act
@@ -50,7 +51,8 @@ func Test_Runner_ShouldFindInternalTestField(t *testing.T) {
 	}
 	itests := []testing.InternalTest{itest}
 
-	m := testing.MainStart(nil, itests, make([]testing.InternalBenchmark, 0), make([]testing.InternalFuzzTarget, 0), make([]testing.InternalExample, 0))
+	deps := &TestDeps{}
+	m := testing.MainStart(deps, itests, make([]testing.InternalBenchmark, 0), make([]testing.InternalFuzzTarget, 0), make([]testing.InternalExample, 0))
 
 	// Act
 	got := getInternalTests(m)
