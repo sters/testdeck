@@ -93,7 +93,7 @@ type TestRunner interface {
 var runnerMainStart = func(deps *TestDeps, tests []testing.InternalTest) {
 	// We need to instantiate our own "m" so we can feed it our implementation of
 	// testDeps. This allows us to control the running match pattern between Runs.
-	m2 := testing.MainStart(deps, tests, make([]testing.InternalBenchmark, 0), make([]testing.InternalExample, 0))
+	m2 := testing.MainStart(deps, tests, make([]testing.InternalBenchmark, 0), make([]testing.InternalFuzzTarget, 0), make([]testing.InternalExample, 0))
 	m2.Run()
 }
 
