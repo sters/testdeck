@@ -26,6 +26,12 @@ import (
 // suitable for passing to testing.MainStart.
 type TestDeps struct{}
 
+// InitRuntimeCoverage implements testing.testDeps.
+func (t *TestDeps) InitRuntimeCoverage() (mode string, tearDown func(coverprofile string, gocoverdir string) (string, error), snapcov func() float64) {
+	// do nothing
+	return
+}
+
 // corpusEntry is an alias to the same type as internal/fuzz.CorpusEntry.
 // We use a type alias because we don't want to export this type, and we can't
 // import internal/fuzz from testing.
